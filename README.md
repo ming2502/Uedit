@@ -1,6 +1,7 @@
 # UEdit
 
 [![build](https://github.com/ming2502/Uedit/actions/workflows/build.yml/badge.svg)](https://github.com/ming2502/Uedit/actions/workflows/build.yml)
+[![release](https://img.shields.io/github/v/release/ming2502/Uedit)](https://github.com/ming2502/Uedit/releases)
 [![license](https://img.shields.io/github/license/ming2502/Uedit)](LICENSE)
 
 UEdit 是一个原生 Windows 大文件查看、搜索与抽取工具，使用 C++20 + Win32 +
@@ -60,6 +61,9 @@ cmake --build --preset release
 ```powershell
 ctest --test-dir build -C Release --output-on-failure
 ```
+
+推送到 `main` 或提交 PR 时，GitHub Actions 会自动配置、构建、运行测试并打包；
+推送 `v*` 标签会创建 GitHub Release 并附上便携版 zip 与 MSIX。
 
 ## 打包
 
