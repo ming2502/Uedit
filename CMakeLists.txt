@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 if (POLICY CMP0091)
   cmake_policy(SET CMP0091 NEW)
 endif()
-project(uedit VERSION 1.1.1 LANGUAGES CXX)
+project(uedit VERSION 1.1.2 LANGUAGES CXX)
 
 # Static CRT so the portable build has no VC++ redistributable dependency.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

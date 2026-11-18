@@ -63,17 +63,35 @@ ctest --test-dir build -C Release --output-on-failure
 ```
 
 推送到 `main` 或提交 PR 时，GitHub Actions 会自动配置、构建、运行测试并打包；
-推送 `v*` 标签会创建 GitHub Release 并附上便携版 zip 与 MSIX。
+推送 `v*` 标签会创建 GitHub Release，附上单文件 exe、便携 zip 与 MSI。
+
+## 安装
+
+Release 提供三种形式：
+
+| 文件 | 说明 |
+|------|------|
+| `uedit.exe` | 单文件便携版，下载后直接运行，无需安装 |
+| `UEdit-<version>-win64.zip` | 便携包（含 VERSION 与 PCRE2 许可） |
+| `UEdit_<version>_x64.msi` | MSI 安装包，安装到 `Program Files\UEdit`，创建开始菜单与桌面快捷方式，支持标准卸载与版本升级 |
+
+MSI 支持静默安装：
+
+```powershell
+msiexec /i UEdit_1.1.2.0_x64.msi /qn
+```
+
+MSIX 不再随 Release 分发：Windows 要求 MSIX 必须由受信任证书签名，未签名包无法安装。
 
 ## 打包
 
 ```powershell
 .\packaging\package_portable.ps1   # dist/UEdit-<version>-win64.zip
-.\packaging\build_msix.ps1         # dist/UEdit_<version>_x64.msix（未签名）
-.\packaging\verify_packages.ps1    # 校验两份 exe 与构建输出 SHA256 一致
+.\packaging\build_msi.ps1          # dist/UEdit_<version>_x64.msi（首次自动下载 WiX 3.14）
+.\packaging\verify_packages.ps1    # 校验 zip 与 MSI 内的 exe 和构建输出 SHA256 一致
 ```
 
-正式分发前请用真实证书签名：
+正式分发前建议用真实证书签名 exe 与 MSI：
 
 ```powershell
 .\packaging\sign_release.ps1 -PfxPath C:\path\codesign.pfx -PfxPassword "***"

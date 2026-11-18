@@ -1112,3 +1112,19 @@ Windows 深色标题栏、状态栏帧时间与提交内存 HUD。
 - 项目迁移至 `E:\claude-work\uedit` 后重新配置与构建；单元测试全通过；
   `verify_packages.ps1` 校验两份 exe SHA256 一致
   （`1A60F0FD7C640347C5860460D0BCB6D2A079143F296921BD7C37B1C8B67FDE31`）。
+
+## 25. 发布形式调整（1.1.2，2026-11-18）
+
+- 参考同类项目的发布形态，Release 直接提供可直接运行的 `uedit.exe`、便携 zip
+  与 MSI 安装包；MSIX 不再随 Release 发布（Windows 要求 MSIX 必须由受信任
+  证书签名，未签名安装报 0x800B010A）。
+- MSI 由 WiX Toolset 3.14 构建：`packaging/UEdit.Installer.wxs` 与
+  `packaging/build_msi.ps1`（首次运行自动下载 `wix314-binaries.zip` 到
+  `build/tools` 并解压）。安装到 `Program Files\UEdit`，创建开始菜单与桌面
+  快捷方式，使用 `MajorUpgrade` 支持升级；UI 为 `WixUI_InstallDir` 中文界面
+  （`Language=2052`，`light -cultures:zh-CN`）。
+- `verify_packages.ps1` 改用 `msiexec /a` 解包 MSI，校验其中 `uedit.exe` 的
+  SHA256 与构建输出一致，并通过 WindowsInstaller COM 检查 `ProductVersion`。
+- GitHub Actions 打包 zip + MSI，上传 `uedit.exe`/zip/MSI；推送 `v*` 标签时
+  用 `gh release create` 直接发布这三类附件。
+- 版本号统一提升到 1.1.2.0（资源文件、CMake、AppxManifest 与打包脚本）。

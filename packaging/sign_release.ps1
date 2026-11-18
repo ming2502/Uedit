@@ -30,22 +30,22 @@ Write-Output "Rebuilding packages from the signed executable..."
   -File (Join-Path $PSScriptRoot "package_portable.ps1") `
   -Configuration $Configuration | Out-Host
 & powershell -NoProfile -ExecutionPolicy Bypass `
-  -File (Join-Path $PSScriptRoot "build_msix.ps1") `
+  -File (Join-Path $PSScriptRoot "build_msi.ps1") `
   -Configuration $Configuration | Out-Host
 
-$msix = Join-Path $root "dist\UEdit_1.1.1.0_x64.msix"
-Write-Output "Signing MSIX..."
+$msi = Join-Path $root "dist\UEdit_1.1.2.0_x64.msi"
+Write-Output "Signing MSI..."
 & $signtool.FullName sign /fd SHA256 /f $PfxPath /p $PfxPassword `
-  /tr $TimestampUrl /td SHA256 $msix
-if ($LASTEXITCODE -ne 0) { throw "Signing MSIX failed" }
+  /tr $TimestampUrl /td SHA256 $msi
+if ($LASTEXITCODE -ne 0) { throw "Signing MSI failed" }
 
 Write-Output "Verifying signatures..."
 & $signtool.FullName verify /pa /v $exe
 if ($LASTEXITCODE -ne 0) { throw "Signature verification failed for uedit.exe" }
-& $signtool.FullName verify /pa /v $msix
-if ($LASTEXITCODE -ne 0) { throw "Signature verification failed for MSIX" }
+& $signtool.FullName verify /pa /v $msi
+if ($LASTEXITCODE -ne 0) { throw "Signature verification failed for MSI" }
 
 Write-Output "Signed release artifacts:"
 Write-Output "  $exe"
-Write-Output "  $msix"
-Write-Output "  $(Join-Path $root 'dist\UEdit-1.1.1-win64.zip')"
+Write-Output "  $msi"
+Write-Output "  $(Join-Path $root 'dist\UEdit-1.1.2-win64.zip')"

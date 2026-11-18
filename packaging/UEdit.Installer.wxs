@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*"
+           Name="UEdit"
+           Language="2052"
+           Version="$(var.Version)"
+           Manufacturer="UEdit"
+           UpgradeCode="9943057F-9B42-446F-B4FB-5CE772D74193">
+    <Package InstallerVersion="500"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Platform="x64" />
+    <MajorUpgrade DowngradeErrorMessage="已安装更高版本的 UEdit。" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="UEditIcon" SourceFile="$(var.SourceRoot)\res\uedit.ico" />
+    <Property Id="ARPPRODUCTICON" Value="UEditIcon" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/ming2502/Uedit" />
+
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="UEdit" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="UEdit" />
+      </Directory>
+      <Directory Id="DesktopFolder" />
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="MainExecutable" Guid="*">
+        <File Id="UEditExe"
+              Source="$(var.BuildDir)\uedit.exe"
+              KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="StartMenuShortcut" Guid="*">
+        <Shortcut Id="StartMenuShortcut"
+                  Name="UEdit"
+                  Description="UEdit 大文件查看与搜索"
+                  Target="[INSTALLFOLDER]uedit.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\UEdit"
+                       Name="startmenu"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="*">
+        <Shortcut Id="DesktopShortcut"
+                  Name="UEdit"
+                  Description="UEdit 大文件查看与搜索"
+                  Target="[INSTALLFOLDER]uedit.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\UEdit"
+                       Name="desktop"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="MainFeature" Title="UEdit" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+  </Product>
+</Wix>

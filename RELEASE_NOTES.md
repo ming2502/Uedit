@@ -1,4 +1,4 @@
-# UEdit 1.1.1.0 — Release Notes
+# UEdit 1.1.2.0 — Release Notes
 
 发布日期：2026-11-18
 平台：Windows 10 1809+ / Windows 11，x64
@@ -11,9 +11,21 @@ UEdit 是一个原生 Windows 大文件查看、搜索与抽取工具。打开 1
 
 | 文件 | 说明 |
 |------|------|
-| `dist/UEdit-1.1.1-win64.zip` | 便携版，解压即用，静态 CRT，无 VC++ 运行时依赖 |
-| `dist/UEdit_1.1.1.0_x64.msix` | MSIX 安装包（**未签名**，安装前需签名） |
-| `dist/test-signing/` | 自签名测试产物（已签名 exe/MSIX）与公钥证书，仅供测试 |
+| `uedit.exe` | 单文件便携版，下载后直接运行，静态 CRT，无 VC++ 运行时依赖 |
+| `dist/UEdit-1.1.2-win64.zip` | 便携包，含 VERSION 与 PCRE2 许可 |
+| `dist/UEdit_1.1.2.0_x64.msi` | MSI 安装包（Program Files\UEdit，开始菜单/桌面快捷方式） |
+| `dist/test-signing/` | 可选：MSIX 自签名测试产物，不再随 Release 发布 |
+
+## 1.1.2 变更（2026-11-18）
+
+- **发布形式**：Release 改为提供可直接运行的 `uedit.exe`、便携 zip 与 MSI；
+  MSIX 不再随 Release 发布（Windows 要求受信任证书签名，未签名包无法安装）。
+- **MSI 安装包**：使用 WiX 3.14 构建，安装到 `Program Files\UEdit`，
+  创建开始菜单与桌面快捷方式，带安装向导，支持静默安装、卸载与版本升级
+  （MajorUpgrade）。`packaging/build_msi.ps1` 首次运行会自动下载 WiX。
+- **验证**：`verify_packages.ps1` 改用 `msiexec /a` 解包 MSI，
+  校验其中 `uedit.exe` 与构建输出 SHA256 一致，并检查 ProductVersion。
+- 版本号统一更新为 1.1.2.0（资源文件、CMake、清单与打包脚本）。
 
 ## 1.1.1 修复（2026-11-18）
 
@@ -98,21 +110,28 @@ C: NVMe。1GB 冷缓存索引在机械盘上约 7s，属磁盘上限。
 
 ## 安装
 
-**便携版**：解压 `UEdit-1.1.1-win64.zip`，运行 `uedit.exe`。
-已使用静态 CRT，`dumpbin` 验证无 `vcruntime/msvcp/ucrtbase` 依赖，无需安装 VC++ 运行库。
+**单文件 exe**：下载 `uedit.exe` 直接运行。
+**便携包**：解压 `UEdit-1.1.2-win64.zip` 后运行 `uedit.exe`。
+两者均为静态 CRT，`dumpbin` 验证无 `vcruntime/msvcp/ucrtbase` 依赖，无需安装 VC++ 运行库。
 
-**MSIX**：仓库中的 MSIX 未签名。安装前请用代码签名证书签名：
+**MSI**：双击 `UEdit_1.1.2.0_x64.msi` 进入安装向导，安装到
+`Program Files\UEdit` 并创建开始菜单、桌面快捷方式；也可静默安装：
+
+```powershell
+msiexec /i UEdit_1.1.2.0_x64.msi /qn
+```
+
+MSIX 不再随 Release 发布：Windows 要求 MSIX 必须由受信任证书签名，
+未签名包会报 0x800B010A。如确需 MSIX，可用 `packaging/test_sign.ps1`
+与 `packaging/test_msix_install.ps1` 在测试机上自签名安装。
+
+正式分发前可用真实证书签名 exe 与 MSI：
 
 ```powershell
 .\packaging\sign_release.ps1 -PfxPath C:\path\codesign.pfx -PfxPassword "***"
 ```
 
-脚本会签名 exe、重新生成便携包与 MSIX、签名 MSIX，并用 `signtool verify /pa` 验证。
-安装：
-
-```powershell
-Add-AppxPackage .\dist\UEdit_1.1.1.0_x64.msix
-```
+脚本会签名 exe、重新生成便携包与 MSI、签名 MSI，并用 `signtool verify /pa` 验证。
 
 ## 签名状态
 
@@ -166,8 +185,9 @@ build\Release\uedit_bench.exe fixtures\sample_1gb.log
 .\packaging\verify_packages.ps1
 ```
 
-`verify_packages.ps1` 会解开便携包与 MSIX，校验两者的 `uedit.exe` 与构建输出
-SHA256 一致，并检查 `VERSION.txt`（1.1.1.0）与 `AppxManifest` 版本。
+`verify_packages.ps1` 会解开便携包，并用 `msiexec /a` 解包 MSI，校验两者的
+`uedit.exe` 与构建输出 SHA256 一致，并检查 `VERSION.txt`（1.1.2.0）与
+MSI 的 `ProductVersion`（1.1.2.0）。
 
 UI 验证：深色与浅色主题均已截图检查；“跟随系统”在本机
 `AppsUseLightTheme=1` 下解析为浅色并显示“跟随系统（浅色）”，

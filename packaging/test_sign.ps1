@@ -4,7 +4,7 @@ $testDir = Join-Path $root "dist\test-signing"
 New-Item -ItemType Directory -Force -Path $testDir | Out-Null
 
 $sourceExe = Join-Path $root "build\Release\uedit.exe"
-$sourceMsix = Join-Path $root "dist\UEdit_1.1.1.0_x64.msix"
+$sourceMsix = Join-Path $root "dist\UEdit_1.1.2.0_x64.msix"
 if (-not (Test-Path $sourceExe) -or -not (Test-Path $sourceMsix)) {
   throw "Release artifacts are missing"
 }

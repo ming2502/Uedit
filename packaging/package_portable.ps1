@@ -16,14 +16,14 @@ if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $staging | Out-Null
 
 Copy-Item $exe $staging
-"UEdit 1.1.1.0 (x64)" | Out-File (Join-Path $staging "VERSION.txt") -Encoding utf8
+"UEdit 1.1.2.0 (x64)" | Out-File (Join-Path $staging "VERSION.txt") -Encoding utf8
 
 $license = Join-Path $root "third_party\pcre2-10.44\LICENCE"
 if (Test-Path $license) {
   Copy-Item $license (Join-Path $staging "PCRE2-LICENCE.txt")
 }
 
-$zip = Join-Path $dist "UEdit-1.1.1-win64.zip"
+$zip = Join-Path $dist "UEdit-1.1.2-win64.zip"
 if (Test-Path $zip) { Remove-Item $zip -Force }
 Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $zip
 Write-Output "Portable package: $zip"

@@ -27,7 +27,7 @@ if (-not $makeappx) {
   throw "makeappx.exe not found. Install the Windows SDK packaging tools."
 }
 
-$output = Join-Path $dist "UEdit_1.1.1.0_x64.msix"
+$output = Join-Path $dist "UEdit_1.1.2.0_x64.msix"
 & $makeappx.FullName pack /d $staging /p $output /o
 if ($LASTEXITCODE -ne 0) {
   throw "makeappx failed with exit code $LASTEXITCODE"
