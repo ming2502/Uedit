@@ -1,0 +1,10 @@
+/build/
+/dist/
+/fixtures/
+/tools/vs_buildtools.exe
+/third_party/pcre2.zip
+*.dmp
+*.png
+!packaging/assets/*.png
+!res/*.png
+/tools/vs_install_result.txt
